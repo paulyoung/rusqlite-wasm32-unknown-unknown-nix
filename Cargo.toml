@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "crates/rusqlite-wasm32-unknown-unknown-nix",
+]
+
+[patch.crates-io]
+rusqlite = { version = "0.26", git = "https://github.com/trevyn/rusqlite.git", branch = "wasm32-unknown-unknown" }
+libsqlite3-sys = { version = "0.23", git = "https://github.com/trevyn/rusqlite.git", branch = "wasm32-unknown-unknown" }
