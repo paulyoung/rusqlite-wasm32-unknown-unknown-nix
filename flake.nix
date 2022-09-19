@@ -43,17 +43,16 @@
           # our specific toolchain there.
           craneLib = (crane.mkLib pkgs).overrideToolchain rustWithWasmTarget;
 
+          stdenv = pkgs.llvmPackages_14.stdenv;
+
           rusqlite-wasm32-unknown-unknown-nix = craneLib.buildPackage ({
+            inherit stdenv;
             src = ./.;
             cargoExtraArgs = "--package rusqlite-wasm32-unknown-unknown-nix";
             # crane tries to run the Wasm file as if it were a binary
             doCheck = false;
-            # Without setting TARGET_CC we run into:
-            #
-            #   "valid target CPU values are: mvp, bleeding-edge, generic"
-            #
-            # https://github.com/rusqlite/rusqlite/pull/1010#issuecomment-1247333415
-            TARGET_CC = "${pkgs.stdenv.cc.nativePrefix}cc";
+            CC = "${stdenv.cc.nativePrefix}cc";
+            AR = "${stdenv.cc.nativePrefix}ar";
           });
         in
           {
@@ -71,8 +70,8 @@
               # For Emacs integration
               RUST_SRC_PATH = pkgs.rustPlatform.rustLibSrc;
 
-              # See note above about TARGET_CC
-              TARGET_CC = "${pkgs.stdenv.cc.nativePrefix}cc";
+              CC = "${stdenv.cc.nativePrefix}cc";
+              AR = "${stdenv.cc.nativePrefix}ar";
 
               inputsFrom = builtins.attrValues self.checks;
 
